@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<VTKFile type="PImageData" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <PImageData WholeExtent="-10 10 -10 10 -10 10" GhostLevel="0" Origin="5 0 0" Spacing="0.5 1 1">
+    <PPointData Scalars="myPointData">
+      <PDataArray type="Float32" Name="myPointData"/>
+    </PPointData>
+    <PCellData>
+      <PDataArray type="Float64" Name="myCellData"/>
+    </PCellData>
+    <Piece Extent="-10 10 -10 10 -10 0" Source="test_0.vti"/>
+    <Piece Extent="-10 10 -10 10 0 10" Source="test_1.vti"/>
+  </PImageData>
+</VTKFile>
