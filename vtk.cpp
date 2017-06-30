@@ -31,12 +31,13 @@ class ImageSource : public vtkImageAlgorithm
 public:
     ImageSource();
     void setWholeExtent(const int * const extent);
+    void setLocalExtent(const int * const extent);
     void setOrigin(const double * const origin);
     void setSpacing(const double * const spacing);
 
 private:
     double origin_[3], spacing_[3];
-    int wholeExtent_[6];
+    int wholeExtent_[6], localExtent_[6];
 
     int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *outputVector);
 
@@ -59,8 +60,20 @@ ImageSource::ImageSource()
     wholeExtent_[3] = 1;
     wholeExtent_[4] = 0;
     wholeExtent_[5] = 1;
+    localExtent_[0] = 0;
+    localExtent_[1] = 1;
+    localExtent_[2] = 0;
+    localExtent_[3] = 1;
+    localExtent_[4] = 0;
+    localExtent_[5] = 1;
 
     this->SetNumberOfInputPorts(0);
+}
+
+void ImageSource::setLocalExtent(const int * const extent)
+{
+    for (int i = 0; i < 6; i++)
+        localExtent_[i] = extent[i];
 }
 
 void ImageSource::setWholeExtent(const int * const extent)
@@ -88,6 +101,7 @@ int ImageSource::RequestInformation(vtkInformation *, vtkInformationVector **, v
     outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), wholeExtent_, 6);
     outInfo->Set(vtkDataObject::ORIGIN(), origin_, 3);
     outInfo->Set(vtkDataObject::SPACING(), spacing_, 3);
+    outInfo->Set(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), localExtent_, 6);
 
     vtkDataObject::SetPointDataActiveScalarInfo(outInfo, VTK_FLOAT, 1);
 
@@ -194,7 +208,7 @@ int main(int narg, char ** arg)
     source->setWholeExtent(whole_extent);
     source->setSpacing(spacing);
     source->setOrigin(origin);
-    source->SetUpdateExtent(extent);
+    source->Update();
     vtkSmartPointer<vtkAlgorithmOutput> idport = source->GetOutputPort();
 
     vtkSmartPointer<vtkXMLPImageDataWriter> writer = vtkSmartPointer<vtkXMLPImageDataWriter>::New();
